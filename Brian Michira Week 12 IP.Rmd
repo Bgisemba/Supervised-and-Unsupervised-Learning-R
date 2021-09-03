@@ -1,0 +1,653 @@
+---
+title: "Brian Michira Week 12 IP R Fundamentals"
+author: "Brian Michira"
+date: "8/27/2021"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Defining the Question
+
+## Research Question
+A Kenyan entrepreneur has created an online cryptography course and would want to advertise it on her blog. She currently targets audiences originating from various countries. In the past, she ran ads to advertise a related course on the same blog and collected data in the process. She would now like to employ your services as a Data Science Consultant to help her identify which individuals are most likely to click on her ads.
+
+## Metrics For Success
+This project will be successful when we correctly identify which individuals are most likely to click on the ads.
+
+## Understanding the Context
+A Kenyan entrepreneur has created an online cryptography course and would want to advertise it on her blog. She currently targets audiences originating from various countries. In the past, she ran ads to advertise a related course on the same blog and collected data in the process.
+
+## Experimental Design Taken
+1.Specifying the research question.
+2.
+2.Loading and Previewing the Dataset.
+3.Cleaning the Dataset.
+4.Explanatory Data Aalysis.
+5.Conclusion.
+
+## 1.Loading and Previewing the dataset
+```{r}
+library(data.table)
+
+```
+
+```{r}
+#loading the dataset
+dataset <- read.csv("http://bit.ly/IPAdvertisingData")
+#Viewing the top of the dataset
+head(dataset)
+
+```
+```{r}
+
+#Viewing the bottom of the dataset
+tail(dataset)
+
+```
+
+```{r}
+#checking the number of records
+dim(dataset)
+```
+The dataset has 1000 rows and  10 columns.
+```{r}
+#Checking the Class of our dataset
+class(dataset)
+```
+```{r}
+#checking the info
+str(dataset)
+```
+
+
+## 2.Cleaning the Dataset
+```{r}
+#checking for missing values
+sum(is.na(dataset))
+```
+There are no missing values.
+```{r}
+#checking for duplicates
+duplicated <- dataset[duplicated(dataset),]
+duplicated
+```
+There are no duplicated rows.
+
+```{r}
+#checking the info
+str(dataset)
+
+```
+
+```{r}
+# overview of the dataset
+summary(dataset)
+```
+```{r}
+# checking for outliers on Daily time spent on site
+boxplot(dataset$Daily.Time.Spent.on.Site)
+```
+
+There are no outliers on Daily Time Spent on Site.
+```{r}
+# checking for outliers on Age
+boxplot(dataset$Age)
+```
+
+There are no outliers on the Age column.
+```{r}
+# checking for outliers on Area income
+boxplot(dataset$Area.Income)
+```
+
+There are outliers on the Area income column.
+```{r}
+# viewing the exact outliers 
+boxplot.stats(dataset$Area.Income)$out
+```
+
+
+```{r}
+# checking for outliers on Daily Internet Usage
+boxplot(dataset$Daily.Internet.Usage)
+```
+
+There are no outliers on the daily Internet.
+
+## 3.Exploratory Data Analysis
+
+## Univariate Analysis
+
+### Daily Time Spent on Site
+
+#### 1. Measures of Central Tendency
+```{r}
+# mean
+mean(dataset$Daily.Time.Spent.on.Site)
+```
+The Mean pf the Time Spent on Site Daily is 65.0002.
+```{r}
+# median
+median(dataset$Daily.Time.Spent.on.Site)
+```
+The Median of the Time Spent on Site Daily is 68.215.
+```{r}
+# mode
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+getmode(dataset$Daily.Time.Spent.on.Site)
+```
+The most common time Spent on site is 62.26.
+
+#### 2.Measure of Dispersion
+```{r}
+#Standard Deviation
+sd(dataset$Daily.Time.Spent.on.Site)
+```
+
+The Standard Deviation of Daily Time Spent on Site is 15.85361.
+```{r}
+#Variance
+var(dataset$Daily.Time.Spent.on.Site)
+```
+The Variance of Daily Time Spent on Site is 251.3371.
+
+```{r}
+#Range
+range(dataset$Daily.Time.Spent.on.Site)
+```
+
+The range of Daily Time Spent on Site was 32.60 on the minimum and 91.43 on the maximum.
+```{r}
+#Quantile
+quantile(dataset$Daily.Time.Spent.on.Site)
+```
+
+
+### Age
+
+#### 1.Measure of Central Tendancy
+```{r}
+# mean
+mean(dataset$Age)
+```
+The mean Age is 36 years.
+```{r}
+# median
+median(dataset$Age)
+```
+The median Age is 35 years
+```{r}
+# mode
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+getmode(dataset$Age)
+```
+Most people had 31 years.
+
+#### 2.Measure of Dispersion
+```{r}
+#Variance
+var(dataset$Age)
+```
+The variance of age is 77.18611.
+```{r}
+#Standard Deviation
+sd(dataset$Age)
+```
+The Standard Deviation of Age is 8.785562.
+```{r}
+#range
+range(dataset$Age)
+```
+The minimum age is 19 years and the maximmum age is 61 years.
+```{r}
+#Quantile
+quantile(dataset$Age)
+```
+
+### Area Income
+
+#### 1.Measure of Central Tendency
+```{r}
+#Mean
+mean(dataset$Area.Income)
+```
+The mean Area income is 55,000.
+```{r}
+#median
+median(dataset$Area.Income)
+```
+The median Area Income is 57012.3.
+```{r}
+# mode
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+getmode(dataset$Area.Income)
+```
+The common Area Income is 61,833.9.
+
+#### 2.Measure of Dispersion
+```{r}
+#Variance
+var(dataset$Area.Income)
+```
+The Variance of Area Income is 179952406.
+```{r}
+#Standard Deviation
+sd(dataset$Area.Income)
+```
+The Standard Deviation of Area Income is 13414.63.
+```{r}
+#Range
+range(dataset$Area.Income)
+```
+The minimum Area Income is 13996.5 and the maximum Area Income is 79484.8.
+```{r}
+#quantile
+quantile(dataset$Area.Income)
+```
+
+### Daily Internet Usage
+
+#### 1.Measure of central Tendecy
+```{r}
+#mean
+mean(dataset$Daily.Internet.Usage)
+```
+The Mean Internet Usage is 180.0001.
+```{r}
+#median
+median(dataset$Daily.Internet.Usage)
+```
+The Median internet usage is 183.13.
+```{r}
+# mode
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+getmode(dataset$Daily.Internet.Usage)
+```
+The most common Internet Usage is 167.22.
+
+
+## Graphical representation of univariate ananlysis
+
+###Daily Time Spent on Site
+```{r}
+hist(dataset$Daily.Time.Spent.on.Site,main = "Distribution of Daily Time Spent on Site",col="purple"
+    ,xlab="Daily Time Spent on Site")
+```
+
+The duration between 75 and 85 had the highest frequency.
+
+### Age
+```{r}
+hist(dataset$Age,main = "Distribution of Age",col="blue",
+     xlab="Age")
+```
+
+The age between 25 years and 35 years had the highest frequency.
+Age is skewed to the right.
+
+### Area Income
+```{r}
+hist(dataset$Area.Income,main = "Distribution of Area Income",col="Cyan",
+     xlab = "Area Income")
+
+```
+
+The Income between 60,000 and 70,000 had the highest frequency.
+
+### Daily Internet Usage
+```{r}
+hist(dataset$Daily.Internet.Usage,main = "Distribution of Daily Internet Usage",col="maroon",
+     xlab="Daily Internet Usage")
+```
+
+The usage between 200 and 250 had the highest frequency.
+Daily internet usage is Bimodal.
+
+### Univariate Analysis of Categorical Data
+```{r}
+Gender <- dataset$Male
+frequency<- table(Gender)
+frequency
+barplot(frequency,xlab ="gender", ylab = "frequency", col="orange")
+```
+Majority of the respondents were female.519 females 481 males.
+
+```{r}
+Ads <- dataset$Clicked.on.Ad
+frequency<- table(Ads)
+frequency
+barplot(frequency,xlab ="CLicked on Ad", ylab = "frequency", col="#0073C2FF")
+```
+
+
+## 2.Bivariate Analysis
+
+### (i)Covariance
+```{r}
+# covariance between daily time spent on site and age
+cov(dataset$Daily.Time.Spent.on.Site,dataset$Age)
+```
+The covariance between daily time spent on site and age is -46.17. It indicates a negative linear relationship between the two variables.
+```{r}
+# covariance between area income and daily internet usage
+cov(dataset$Area.Income,dataset$Daily.Internet.Usage)
+```
+The covariance between area income and daily internet usage is 198762.5. It indicates a positive linear relationship between the two variables.
+```{r}
+# covariance between daily internet usage and age
+cov(dataset$Daily.Internet.Usage,dataset$Age)
+```
+The covariance between daily internet usage and age is -141.6348. It indicates a negative linear relationship between the two variables.
+
+
+### (ii)Correlation
+
+```{r}
+# correlation coefficient between area income and daily internet usage
+cor(dataset$Area.Income,dataset$Daily.Internet.Usage)
+```
+The correlation coefficient between area income and daily internet usage is 0.3375.
+
+
+```{r}
+# correlation coefficient between daily time spent on site and area income
+cor(dataset$Daily.Time.Spent.on.Site,dataset$Area.Income)
+```
+The correlation coefficient between daily time spent on site and area income is 0.311.
+```{r}
+#correlation matrix
+cor(dataset[,unlist(lapply(dataset, is.numeric))])
+```
+From the correlation matrix looking at the clicked on AD we can see that  its only age that has a positive correlation with Clicked on AD.
+We can confirm this by conducting the point Biserial correlation which is used to test correlation between a continuos and a categorical variable.
+```{r}
+#Biserial correlation
+cor.test(dataset$Age,dataset$Clicked.on.Ad)
+```
+We found a correlation coefficient of 0.492 which show there is a positive correlation between Age and Clicked on Ad.
+
+#### (iii)Scatter plots
+```{r}
+# scatter plot between age and daily time spent on site
+plot(dataset$Daily.Time.Spent.on.Site,dataset$Age,main="Scatter plot between Age and Daily time spent on site",col='blue',xlab="Daily Time spent on site",ylab="Age",pch=19)
+```
+
+The scatter plot of daily time spent on site and age shows us that between the ages 25 years and 40 years spent more time on site.
+
+```{r}
+# scatter plot between Area Income and daily time spent on site
+plot(dataset$Daily.Time.Spent.on.Site,dataset$Area.Income,main="Scatter plot between Area Income and Daily time spent on site",col='green',xlab="Daily Time spent on site",ylab="Area Income",pch=19)
+```
+
+The scatter plot between daily time spent on site and area income shows us that those with an area income between 50,000 and 70,000 are the ones who spend more time on site.
+
+```{r}
+# scatter plot between Area Income and daily time spent on site
+plot(dataset$Daily.Internet.Usage,dataset$Area.Income,main="Scatter plot between Area Income and Daily INternet Usage",col='orange',xlab="Daily Internet Usage",ylab="Area Income",pch=19)
+```
+
+The scatter plot of daily internet usage and Area Income shows us that between income 60,000 and 75,000 spent more on internet while those between income 35,000 and 50,000 spent less on internet.
+
+```{r}
+# scatter plot between age and daily Internet Usage
+plot(dataset$Daily.Internet.Usage,dataset$Age,main="Scatter plot between Age and Daily Internet Usage",col='purple',xlab="Daily Internet usage",ylab="Age",pch=19)
+```
+
+The scatter plot of daily internet usage and age shows us that between the ages 25 years and 40 years spent more on internet.
+
+## Conclusion
+1.Majority of the respondents were females.
+
+2.All the variables have a negative correlation with Clicked on Ad apart from Age.
+
+3.There is a positive correlation between Area Income and Daily Time Spent on Site.
+
+4.There is a positive correlation between Area Income and Daily Internet Usage.
+
+5.There is a positive correlation between Age and Clicked on Ad.
+
+6.Respondents aged between 25 years and 40 years spent more time on the internet.
+
+7.Respondents aged between 25 years and 40 years spent a lot on Internet.This is supported by the fact that they spent a lot of time on the internet.
+
+From our Analysis we found out that the elderly are more likely to click on the Ads.
+
+From our analysis we found out that the low income earners are more likely to click on the Ads.
+
+
+
+# MOdelling
+
+## Previewing the dataset
+```{r}
+head(dataset,n=10)
+```
+
+```{r}
+#dropping irrelevant columns
+df<-dataset[-c(5,6,8,9,11,12)]
+head(df)
+```
+## KNN
+```{r}
+#normalizing our data
+normal <- function(x) (
+  return( ((x - min(x)) /(max(x)-min(x))) )
+)
+
+df_new <- as.data.frame(lapply(df, normal))
+summary(df_new)
+```
+```{r}
+#viewing the top
+head(df_new)
+```
+
+```{r}
+set.seed(101) # Set Seed so that same sample can be reproduced in future also
+# Now Selecting 80% of data as sample from total 'n' rows of the data  
+sample <- sample.int(n = nrow(df_new), size = floor(.80*nrow(df_new)), replace = F)
+train <- df_new[sample, ]
+test  <- df_new[-sample, ]
+```
+
+```{r}
+#shape of the train and test dataset
+dim(train)
+```
+Our train dataset has 800 records and 6 variables.
+
+```{r}
+dim(test)
+```
+Our test set has 200 records and 6 variables.  
+  
+```{r}
+#finding the squareroot to determine k
+sqrt(1000)
+```
+We decide to use k=32 as the number of nearest neighbours
+```{r}
+# fitting KNN classifier to the training set and predicting the test set results
+library(class)
+y_pred = knn(train = train[,-6],
+             test = test[,-6],
+             cl = train[,6],
+             k = 32)
+y_pred
+```
+```{r}
+# making the Confusion matrix
+cm = table(test[,6],y_pred)
+cm
+```
+```{r}
+#getting the accuracy of the model
+accuracy <- function(x){sum(diag(x)/(sum(rowSums(x)))) * 100}
+accuracy(cm)
+```
+
+The KNN model had an accuracy score of 95.5% on our test data.
+Out of 200 records;
+ >100 were True Positives(TP)
+ >91 were True Negatives(TN)
+ >1 False Negative(FN)
+ >8 False Positives(FP)
+
+## Decison Trees
+
+```{r}
+# install.packages("rpart.plot")	
+library(rpart.plot)
+library(rpart)
+#library(caret)
+dt<- rpart(formula = Clicked.on.Ad~.,data=df,
+           method = "class")
+rpart.plot(dt)
+```
+
+```{r}
+# predicting the test set results
+pred <- predict(dt, df, type = "class")
+t<-table(pred, df$Clicked.on.Ad)
+t
+```
+```{r}
+accuracy <- function(x){sum(diag(x)/(sum(rowSums(x)))) * 100}
+accuracy(t)
+```
+Our Decision Tree Model had an accuracy score of 95.7%.
+Out of 1000 records;
+ >485 were True Positives(TP)
+ >472 were True Negatives(TN)
+ >28 False Negative(FN)
+ >1 False Positives(FP)
+
+## Naive Bayes
+```{r}
+# splitting the dataset into the training set and test set
+#install.packages('caTools')
+library(caTools)
+set.seed(123)
+split <- sample.split(df$Clicked.on.Ad, SplitRatio = 0.80)
+training <- subset(df, split == TRUE)
+testing <- subset(df, split == FALSE)
+
+```
+```{r}
+# Checking dimensions of the split
+dim(training)
+dim(testing)
+```
+
+```{r}
+# feature scaling
+training[-6] <- scale(training[-6])
+testing[-6] <- scale(testing[-6])
+```
+
+```{r}
+# Fitting Naive Bayes to the Training set
+library(e1071)
+classifier = naiveBayes(x = training[-6],
+                        y = training$Clicked.on.Ad)
+```
+
+```{r}
+# Predicting the Test set results
+y_pred = predict(classifier, newdata = testing[-6])
+y_pred
+```
+```{r}
+# Making the Confusion Matrix
+con = table(testing[, 6], y_pred)
+con
+```
+```{r}
+accuracy <- function(x){sum(diag(x)/(sum(rowSums(x)))) * 100}
+accuracy(con)
+```
+Out of 200 records;
+ >97 were True Positives(TP)
+ >94 were True Negatives(TN)
+ >3 False Negative(FN)
+ >6 False Positives(FP)
+
+## SVM
+```{r}
+# splitting the dataset into the training set and test set
+#install.packages('caTools')
+library(caTools)
+set.seed(123)
+split <- sample.split(df$Clicked.on.Ad, SplitRatio = 0.80)
+training_set <- subset(df, split == TRUE)
+testing_set <- subset(df, split == FALSE)
+
+```
+```{r}
+# feature scaling
+training_set[-6] <- scale(training_set[-6])
+testing_set[-6] <- scale(testing_set[-6])
+```
+
+```{r}
+summary(training_set)
+```
+
+```{r}
+# Fitting the classifier to the training set
+#install.packages('e1071')
+library(e1071)
+classifier = svm(formula =Clicked.on.Ad~.,
+                  data = training,
+                  type = 'C-classification',
+                  kernel = 'linear')
+```
+
+
+
+```{r}
+# predicting the test set results
+y_pred <- predict(classifier, newdata = testing[-6])
+
+```
+
+```{r}
+# making the confusion matrix
+c <- table(testing[,6],y_pred)
+c
+```
+```{r}
+accuracy <- function(x){sum(diag(x)/(sum(rowSums(x)))) * 100}
+accuracy(c)
+```
+Our SVM model had an accuracy score of 96.5%.
+Out of 200 records;
+ >99 were True Positives(TP)
+ >94 were True Negatives(TN)
+ >1 False Negative(FN)
+ >6 False Positives(FP)
+
+# Conclusion and Reccomendation
+The SVM model had the highest accuracy score of 96.5%.Hence we recommended the use of SVM model in predicting whether one will click on the ADs.
