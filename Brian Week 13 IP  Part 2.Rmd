@@ -1,0 +1,833 @@
+---
+title: "Unsupervised Learning with R"
+author: "Brian Michira"
+date: "9/3/2021"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# 1.Problem Definition
+Kira Plastinina is a Russian brand that is sold through a defunct chain of retail stores in Russia, Ukraine, Kazakhstan, Belarus, China, Philippines, and Armenia. The brands Sales and Marketing team would like to understand their customers behavior from data that they have collected over the past year. More specifically, they would like to learn the characteristics of customer groups.
+
+# 2.Data Sourcing
+
+# Loading the Dataset
+
+```{r}
+data=read.csv("http://bit.ly/EcommerceCustomersDataset")
+head(data,n=10)
+```
+
+# 3.Cheking the Data
+
+```{r}
+# view the bottom of our dataset
+tail(data)
+```
+
+```{r}
+# view the dimensions of our dataset
+dim(data)
+```
+Our dataset has 18 columns and 12330 rows.
+
+```{r}
+# view the structure of our dataset
+str(data)
+```
+
+# 4.Data Cleaninig
+
+```{r}
+#viewing the number of missing values
+sum(is.na(data))
+```
+The sum of missing values is 112.We went ahead and checked for the missing value in each column.
+
+```{r}
+# check for total null values in each column
+colSums(is.na(data))
+```
+
+We noticed there are 14 missing values in most of the columns and we decided to drop and observe if the are originating from the same rows.
+
+```{r}
+# dropping the rows with the missing values
+df<-na.omit(data)
+head(df)
+```
+It was safe to drop the missing values since it was a small percentage of the whole data.
+
+```{r}
+#Checking the number of records 
+dim(df)
+```
+14 rows with majority of the missing values have been dropped.
+```{r}
+# find any duplicated rows in our dataset
+duplicated_rows <- df[duplicated(df),]
+
+```
+117 rows are duplicated
+```{r}
+# removing the duplicated rows
+df_new <- unique(df)
+
+```
+## Checking for outliers
+```{r}
+# checking for outliers on the Administrative column
+boxplot(df_new$Administrative)
+
+```
+
+```{r}
+# checking for outliers in Administrative_Duration
+boxplot(df_new$Administrative_Duration)
+
+```
+
+
+```{r}
+# check for outliers in Informational
+boxplot(df_new$Informational)
+
+```
+
+```{r}
+# check for outliers in Informational_Duration
+boxplot(df_new$Informational_Duration)
+
+```
+
+```{r}
+# check for outliers in ProductRelated
+boxplot(df_new$ProductRelated)
+
+```
+
+```{r}
+# check for outliers in ProductRelated_Duration
+boxplot(df_new$ProductRelated_Duration)
+
+```
+```{r}
+# check for outliers in BounceRates
+boxplot(df_new$BounceRates)
+
+```
+```{r}
+# check for outliers in ExitRates
+boxplot(df_new$ExitRates)
+
+```
+
+```{r}
+# check for outliers in PageValues
+boxplot(df_new$PageValues)
+
+```
+```{r}
+# check for outliers in SpecialDay
+boxplot(df_new$SpecialDay)
+
+```
+
+```{r}
+# check for outliers in OperatingSystems
+boxplot(df_new$OperatingSystems)
+
+```
+
+```{r}
+# check for outliers in Browser
+boxplot(df_new$Browser)
+
+```
+```{r}
+# check for outliers in Region
+boxplot(df_new$Region)
+
+```
+
+```{r}
+# check for outliers in TrafficType
+boxplot(df_new$TrafficType)
+```
+
+#  5.Exploratory Data Analysis
+
+## Univariate Analysis
+
+### 1.Measures of Central Tendency & Measures of Dispersion
+
+```{r}
+# mean, median, Min, Max
+summary(df_new)
+```
+
+
+```{r}
+library(moments)
+# mode function
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+```
+
+```{r}
+#mean
+mean(df_new$Administrative)
+```
+```{r}
+#meadian
+median(df_new$Administrative)
+```
+```{r}
+#mode
+getmode(df_new$Administrative)
+```
+```{r}
+#variance
+var(df_new$Administrative)
+```
+```{r}
+#standard deviation
+sd(df_new$Administrative)
+```
+```{r}
+#variance
+var(df_new$Administrative)
+```
+```{r}
+#skewness
+skewness(df_new$Administrative)
+```
+Administrative was positively skewed/right skewed showing most of the values were greater than the mean.
+```{r}
+#kurtosis
+kurtosis(df_new$Administrative)
+```
+Administrative had a positive kurtosis.Showing the presence of outliers.
+
+## Administrative Duration
+
+```{r}
+#mean
+mean(df_new$Administrative_Duration)
+```
+```{r}
+#median
+median(df_new$Administrative_Duration)
+```
+```{r}
+#mode
+getmode(df_new$Administrative_Duration)
+```
+```{r}
+#variance
+var(df_new$Administrative_Duration)
+```
+```{r}
+#standard deviation
+sd(df_new$Administrative_Duration)
+```
+```{r}
+#variance
+var(df_new$Administrative_Duration)
+```
+```{r}
+#skewness
+skewness(df_new$Administrative_Duration)
+```
+```{r}
+#kurtosis
+kurtosis(df_new$Administrative_Duration)
+```
+
+## Informational
+```{r}
+#mean
+mean(df_new$Informational)
+```
+```{r}
+#median
+median(df_new$Informational)
+```
+```{r}
+#mode
+getmode(df_new$Informational)
+```
+```{r}
+#variance
+var(df_new$Informational)
+```
+```{r}
+#standard deviation
+sd(df_new$Informational)
+```
+```{r}
+#variance
+var(df_new$Informational)
+```
+```{r}
+#skewness
+skewness(df_new$Informational)
+```
+```{r}
+#kurtosis
+kurtosis(df_new$Informational)
+```
+
+## Informational Duration
+```{r}
+#mean
+mean(df_new$Informational_Duration)
+```
+```{r}
+#median
+median(df_new$Informational_Duration)
+```
+```{r}
+#mode
+getmode(df_new$Informational_Duration)
+```
+```{r}
+#variance
+var(df_new$Informational_Duration)
+```
+```{r}
+#standard deviation
+sd(df_new$Informational_Duration)
+```
+```{r}
+#variance
+var(df_new$Informational_Duration)
+```
+```{r}
+#skewness
+skewness(df_new$Informational_Duration)
+```
+```{r}
+#kurtosis
+kurtosis(df_new$Informational_Duration)
+```
+
+## Product Related
+```{r}
+#mean
+mean(df_new$ProductRelated)
+```
+```{r}
+#median
+median(df_new$ProductRelated)
+```
+```{r}
+#mode
+getmode(df_new$ProductRelated)
+```
+```{r}
+#variance
+var(df_new$ProductRelated)
+```
+```{r}
+#standard deviation
+sd(df_new$ProductRelated)
+```
+```{r}
+#variance
+var(df_new$ProductRelated)
+```
+```{r}
+#skewness
+skewness(df_new$ProductRelated)
+```
+```{r}
+#kurtosis
+kurtosis(df_new$ProductRelated)
+```
+
+## Product Related Duration
+```{r}
+#mean
+mean(df_new$ProductRelated_Duration)
+```
+```{r}
+#median
+median(df_new$ProductRelated_Duration)
+```
+```{r}
+#mode
+getmode(df_new$ProductRelated_Duration)
+```
+```{r}
+#variance
+var(df_new$ProductRelated_Duration)
+```
+```{r}
+#standard deviation
+sd(df_new$ProductRelated_Duration)
+```
+```{r}
+#variance
+var(df_new$ProductRelated_Duration)
+```
+```{r}
+#skewness
+#skewness(df_new$ProductRelated_Duration)
+```
+```{r}
+#kurtosis
+#kurtosis(df_new$ProductRelated_Duration)
+```
+
+## Bonus Rates
+```{r}
+#mean
+mean(df_new$BounceRates)
+```
+```{r}
+#median
+median(df_new$BounceRates)
+```
+```{r}
+#mode
+getmode(df_new$BounceRates)
+```
+```{r}
+#variance
+var(df_new$BounceRates)
+```
+```{r}
+#standard deviation
+sd(df_new$BounceRates)
+```
+```{r}
+#variance
+var(df_new$BounceRates)
+```
+```{r}
+#skewness
+#skewness(df_new$BounceRates)
+```
+```{r}
+#kurtosis
+#kurtosis(df_new$BounceRates)
+```
+
+## Exit Rates
+```{r}
+#mean
+mean(df_new$ExitRates)
+```
+```{r}
+#median
+median(df_new$ExitRates)
+```
+```{r}
+#mode
+getmode(df_new$ExitRates)
+```
+```{r}
+#variance
+var(df_new$ExitRates)
+```
+```{r}
+#standard deviation
+sd(df_new$ExitRates)
+```
+```{r}
+#variance
+var(df_new$ExitRates)
+```
+```{r}
+#skewness
+skewness(df_new$ExitRates)
+```
+```{r}
+#kurtosis
+kurtosis(df_new$ExitRates)
+```
+
+## Page Values
+```{r}
+#mean
+mean(df_new$PageValues)
+```
+```{r}
+#median
+median(df_new$PageValues)
+```
+```{r}
+#mode
+getmode(df_new$PageValues)
+```
+```{r}
+#variance
+var(df_new$PageValues)
+```
+```{r}
+#standard deviation
+sd(df_new$PageValues)
+```
+```{r}
+#variance
+var(df_new$PageValues)
+```
+```{r}
+#skewness
+#skewness(df_new$PageValues)
+```
+```{r}
+#kurtosis
+kurtosis(df_new$PageValues)
+```
+
+## Special Day
+```{r}
+#mean
+mean(df_new$SpecialDay)
+```
+```{r}
+#meadian
+median(df_new$SpecialDay)
+```
+```{r}
+#mode
+getmode(df_new$SpecialDay)
+```
+```{r}
+#variance
+var(df_new$SpecialDay)
+```
+```{r}
+#standard deviation
+sd(df_new$SpecialDay)
+```
+```{r}
+#variance
+var(df_new$SpecialDay)
+```
+```{r}
+#skewness
+skewness(df_new$SpecialDay)
+```
+```{r}
+#kurtosis
+kurtosis(df_new$SpecialDay)
+```
+
+## Operating Systems
+```{r}
+#mean
+mean(df_new$OperatingSystems)
+```
+```{r}
+#meadian
+median(df_new$OperatingSystems)
+```
+```{r}
+#mode
+getmode(df_new$OperatingSystems)
+```
+```{r}
+#variance
+var(df_new$OperatingSystems)
+```
+```{r}
+#standard deviation
+sd(df_new$OperatingSystems)
+```
+```{r}
+#variance
+var(df_new$OperatingSystems)
+```
+```{r}
+#skewness
+skewness(df_new$OperatingSystems)
+```
+```{r}
+#kurtosis
+kurtosis(df_new$OperatingSystems)
+```
+
+## Browser
+```{r}
+#mean
+mean(df_new$Browser)
+```
+```{r}
+#median
+median(df_new$Browser)
+```
+```{r}
+#mode
+getmode(df_new$Browser)
+```
+```{r}
+#variance
+var(df_new$Browser)
+```
+```{r}
+#standard deviation
+sd(df_new$Browser)
+```
+```{r}
+#variance
+var(df_new$Browser)
+```
+```{r}
+#skewness
+skewness(df_new$Browser)
+```
+```{r}
+#kurtosis
+kurtosis(df_new$Browser)
+```
+All the variables were positively skewed and had a positive kurtosis indicating the presence of outliers.
+
+### Univariate Graphical
+
+#### Histogram
+```{r}
+hist(df_new$Administrative,main = "Distribution of Administrative",col="maroon",
+     xlab="Administrative")
+```
+
+Administrative is positively skewed.
+
+Most of the values were 0.
+
+
+```{r}
+hist(df_new$Administrative_Duration,main = "Distribution of Administrative Duration",col="cyan",
+     xlab="Administrative Duration")
+```
+
+Administrative Duration is positively skewed.
+
+```{r}
+hist(df_new$Informational,main = "Distribution of Informational",col="orange",
+     xlab="Informational")
+```
+
+Informational is positively skewed.
+
+Most of the values were 0.
+
+
+```{r}
+hist(df_new$Informational_Duration,main = "Distribution of Informational Duration",col="yellow",
+     xlab="Informational Duration")
+```
+```{r}
+hist(df_new$ProductRelated,main = "Distribution of Related Product",col="blue",
+     xlab="Related Product")
+```
+```{r}
+hist(df_new$ProductRelated_Duration,main = "Distribution of ",col="maroon",
+     xlab="Administrative")
+```
+```{r}
+hist(df_new$BounceRates,main = "Distribution of Bonus Rates",col="cyan",
+     xlab="Bonus Rates")
+```
+```{r}
+hist(df_new$ExitRates,main = "Distribution of Exit Rates",col="orange",
+     xlab="Exit Rates")
+```
+```{r}
+hist(df_new$PageValues,main = "Distribution of Page Values",col="blue",
+     xlab="Page Values")
+```
+```{r}
+hist(df_new$SpecialDay,main = "Distribution of Special Day",col="maroon",
+     xlab="Special Day")
+```
+MOst of the values oin the Special Day column were 0.
+
+```{r}
+hist(df_new$OperatingSystems,main = "Distribution of Operating Systems",col="cyan",
+     xlab="Operating Systems")
+```
+```{r}
+hist(df_new$Browser,main = "Distribution of Browser",col="blue",
+     xlab="Browser")
+```
+
+
+### Bar Chart
+```{r}
+#Month
+frequency<-table(df_new$Month)
+barplot(frequency,main = "Frequency Distribution of Month")
+```
+
+The Month of May had the highest number of records.
+
+
+```{r}
+frequency_region<-table(df_new$Region)
+barplot(frequency_region,main="Frequency distribution of Region")
+```
+
+Region 1 was visited mostly followed by region 3.
+
+```{r}
+frequency_traffic<-table(df_new$TrafficType)
+barplot(frequency_traffic,main = "Frequency Distribution of Traffic Type")
+```
+```{r}
+frequency_visitor<-table(df_new$VisitorType)
+barplot(frequency_visitor,main="Frequency Distribution of Visitor Type")
+```
+
+Most of the visitors were Returning Visitors.
+
+```{r}
+frequency_rev<-table(df_new$Revenue)
+barplot(frequency_rev,main="Frequency Distribution of Revenue")
+```
+
+```{r}
+frequency_wkd<-table(df_new$Weekend)
+barplot(frequency_wkd)
+```
+
+Majority of the respondents visited the site on weekdays.
+
+## Bivariate Analysis
+```{r}
+#correlation matrix
+cor(df_new[,unlist(lapply(df_new, is.numeric))])
+```
+
+
+#  6.Modelling
+
+##Implementing the Solution
+
+### K Means
+
+```{r}
+head(df_new)
+
+```
+```{r}
+#transforming the logical variables 
+df_new$Revenue <- as.numeric(df_new$Revenue)
+df_new$Weekend <- as.numeric(df_new$Weekend)
+head(df_new)
+```
+
+```{r}
+#Label encoding the categorical variables
+library(CatEncoders)
+encode <- LabelEncoder.fit(df_new$VisitorType)
+df_new$VisitorType <- transform(encode,df_new$VisitorType)
+encode <- LabelEncoder.fit(df_new$Month)
+df_new$Month <- transform(encode,df_new$Month)
+print(unique(df_new$Month))
+print(unique(df_new$VisitorType))
+```
+
+```{r}
+#checking if the variables have been encoded
+head(df_new)
+```
+
+```{r}
+# normalize the dataset
+normal <- function(x){
+  return ((x-min(x)) / (max(x)-min(x)))
+}
+df_new$Administrative<- normal(df_new$Administrative)
+df_new$Administrative_Duration<- normal(df_new$Administrative_Duration)
+df_new$Informational<- normal(df_new$Informational)
+df_new$Informational_Duration<- normal(df_new$Informational_Duration)
+df_new$ProductRelated<- normal(df_new$ProductRelated)
+df_new$ProductRelated_Duration<- normal(df_new$ProductRelated_Duration)
+df_new$BounceRates<- normal(df_new$BounceRates)
+df_new$ExitRates<- normal(df_new$ExitRates)
+df_new$PageValues<- normal(df_new$PageValues)
+df_new$SpecialDay<- normal(df_new$SpecialDay)
+df_new$OperatingSystems<- normal(df_new$OperatingSystems)
+df_new$Browser<- normal(df_new$Browser)
+df_new$Region<- normal(df_new$Region)
+df_new$TrafficType<- normal(df_new$TrafficType)
+head(df_new)
+```
+##### Computing KNN
+```{r}
+#setting revenue as the target variable
+class <- df_new[,18]
+df1<-df_new[,-18]
+df_kmeans <- kmeans(df1,centers=2)
+
+```
+```{r}
+# Previewing the no. of records in each cluster
+ 
+df_kmeans$size 
+```
+The first cluster had 9446 records and the second cluster had 2753 clusters.
+
+```{r}
+# Getting the value of cluster center datapoint 
+df_kmeans$centers
+
+```
+
+```{r}
+# Getting the cluster vector that shows the cluster where each record falls
+#df_kmeans$cluster
+
+```
+
+#### Visualizing the kmeans clusters
+
+```{r}
+library(factoextra)
+fviz_cluster(df_kmeans,data= df1)
+```
+The Kmeans did not bring a clear results.
+
+##CHallenging the solution
+
+challenging the solution by using other clustering algorithms
+
+### Hierachical Clustering
+
+```{r}
+# Compute distances using euclidean
+d <- dist(df1, method = "euclidean")
+#hierarchical clustering using ward.d2
+hc <- hclust(d, method = "ward.D2")
+```
+```{r}
+#plotting a dendogram 
+plot(hc, xlim = c(1, 20), ylim = c(1,8))
+```
+The Hierarchical clustering did not perform well since we used a huge dataset.
+
+###  DBSCAN Clustering
+```{r}
+# minimum 4 points with in a distance of eps(0.4)
+library("dbscan")
+db<-dbscan(df1,eps=0.4,minPts = 4)
+# print the clustering results
+print(db)
+```
+```{r}
+# plot our clusters 
+hullplot(df1,db$cluster)
+```
+# Conclusion $ Recommendation
+K means clustering performed well and so we recommended the use of Kmeans in learning the characteristics of customer groups.
+
